@@ -8,7 +8,7 @@ GitHub Action to deploy blockchain environments using [builder-playground](https
 - name: Start Builder Playground
   uses: flashbots/builder-playground-action@v1
   with:
-    recipe: l1 # Optional: Recipe name or path (just installs if not provided)
+    recipe: l1 # Optional: Recipe name or path to playground.yaml (just installs if not provided)
     version: v0.3.1
     detached: true
     args: --log-level=trace
