@@ -1,0 +1,30 @@
+name: "Builder Playground Action"
+description: "Deploy blockchain environments using builder-playground"
+branding:
+  icon: "box"
+  color: "blue"
+
+inputs:
+  version:
+    description: "Version of builder-playground to use (defaults to latest)"
+    required: false
+    default: "latest"
+  recipe:
+    description: "Recipe name or path to recipe.yaml file"
+    required: true
+  args:
+    description: "Additional arguments to pass to playground start command"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install builder-playground
+      uses: flashbots/flashbots-toolchain@v0.2
+      with:
+        builder-playground: ${{ inputs.version }}
+
+    - name: Start playground with recipe
+      shell: bash
+      run: playground start "${{ inputs.recipe }}" --detached ${{ inputs.args }}
