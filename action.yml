@@ -10,10 +10,15 @@ inputs:
     required: false
     default: "latest"
   recipe:
-    description: "Recipe name or path to recipe.yaml file"
-    required: true
+    description: "Recipe name or path to playground.yaml file"
+    required: false
+    default: ""
+  detached:
+    description: "Run playground in detached mode"
+    required: false
+    default: "true"
   args:
-    description: "Additional arguments to pass to playground start command"
+    description: "Additional arguments to pass to builder-playground start command"
     required: false
     default: ""
 
@@ -26,5 +31,6 @@ runs:
         builder-playground: ${{ inputs.version }}
 
     - name: Start playground with recipe
+      if: inputs.recipe != ''
       shell: bash
-      run: playground start "${{ inputs.recipe }}" --detached ${{ inputs.args }}
+      run: builder-playground start "${{ inputs.recipe }}" ${{ inputs.detached == 'true' && '--detached' || '' }} ${{ inputs.args }}

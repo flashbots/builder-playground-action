@@ -1,0 +1,43 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  test-recipe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          recipe: l1
+      - run: builder-playground test
+  
+  test-recipe-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          recipe: testdata/playground.yaml
+      - run: builder-playground test
+
+  test-attached-with-args:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          detached: false
+          recipe: l1
+          args: --timeout 5s 2>&1 | tee /tmp/playground.log
+      - name: Verify timeout reached
+        run: grep -q "Timeout reached" /tmp/playground.log
+
+  test-install-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+      - run: builder-playground --version
+
+  

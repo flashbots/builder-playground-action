@@ -8,19 +8,45 @@ GitHub Action to deploy blockchain environments using [builder-playground](https
 - name: Start Builder Playground
   uses: flashbots/builder-playground-action@v1
   with:
-    recipe: l1 # Required: recipe name or path to recipe.yaml
+    recipe: l1
+    version: v0.3.1
+    detached: true
+    args: --log-level=trace
 ```
 
 ## Inputs
 
-| Input     | Description                             | Required | Default  |
-| --------- | --------------------------------------- | -------- | -------- |
-| `version` | Version of builder-playground to use    | No       | `latest` |
-| `recipe`  | Recipe name or path to recipe.yaml file | Yes      | -        |
+| Input      | Description                                              | Required | Default  |
+| ---------- | -------------------------------------------------------- | -------- | -------- |
+| `version`  | Version of builder-playground to use                     | No       | `latest` |
+| `recipe`   | Recipe name or path to playground.yaml file              | No       | -        |
+| `detached` | Run playground in detached mode                          | No       | `true`   |
+| `args`     | Additional arguments to pass to builder-playground start | No       | -        |
 
 ## Example Workflows
 
-### Using a built-in recipe
+### Install only
+
+```yaml
+name: Deploy Devnet
+on: [push]
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install builder-playground
+        uses: flashbots/builder-playground-action@v1
+
+      - name: Run tests
+        run: |
+          builder-playground start <your-args>
+          # Your tests here
+```
+
+### Auto-start with a built-in recipe
 
 ```yaml
 name: Deploy Devnet
@@ -36,6 +62,7 @@ jobs:
         uses: flashbots/builder-playground-action@v1
         with:
           recipe: l1
+          args: --use-native-reth --timeout 5s
 
       - name: Run tests
         run: |
@@ -57,8 +84,8 @@ jobs:
       - name: Start playground
         uses: flashbots/builder-playground-action@v1
         with:
-          version: v1.0.0
-          recipe: ./configs/my-recipe.yaml
+          version: v0.3.1
+          recipe: ./configs/playground.yaml
 
       - name: Run tests
         run: |
@@ -68,6 +95,12 @@ jobs:
 ## How it works
 
 This action uses [flashbots-toolchain](https://github.com/flashbots/flashbots-toolchain) to install builder-playground and then runs it in the background with your specified recipe.
+
+## Testing locally
+
+- Install `act` (nektos/act).
+- Change `action.yml` or the action test workflow in `.github/workflows/test.yml`.
+- `make test`
 
 ## License
 
